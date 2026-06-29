@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Isla de las Preguntas Imposibles</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Fredoka', sans-serif;
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+      
+     
+      background-color: #e0f2fe;
+      background-image: 
+        linear-gradient(rgba(14, 165, 233, 0.04) 1.5px, transparent 1.5px),
+        linear-gradient(90deg, rgba(14, 165, 233, 0.04) 1.5px, transparent 1.5px);
+      background-size: 40px 40px;
+    }
+
+  
+    .bg-emoji {
+      position: absolute;
+      user-select: none;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.25;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+    }
+
+   
+    .e-cloud1 { top: 10%; left: 8%; font-size: 3.5rem; animation: floatSide 8s ease-in-out infinite alternate; }
+    .e-cloud2 { top: 15%; right: 10%; font-size: 3rem; animation: floatSide 10s ease-in-out infinite alternate-reverse; }
+    .e-star1 { top: 45%; left: 5%; font-size: 2.2rem; animation: floatUp 5s ease-in-out infinite; }
+    .e-star2 { top: 35%; right: 6%; font-size: 2.5rem; animation: floatUp 6s ease-in-out infinite 1s; }
+    .e-boat { bottom: 12%; left: 12%; font-size: 3.8rem; animation: rockBoat 7s ease-in-out infinite; }
+    .e-fish { bottom: 15%; right: 15%; font-size: 2.8rem; animation: swimFish 9s ease-in-out infinite alternate; }
+    .e-wave1 { bottom: 5%; left: 30%; font-size: 2rem; animation: floatSide 6s ease-in-out infinite alternate; }
+    .e-wave2 { bottom: 6%; right: 35%; font-size: 2rem; animation: floatSide 7s ease-in-out infinite alternate-reverse; }
+
+    
+    @keyframes floatSide {
+      0% { transform: translateX(0) translateY(0); }
+      100% { transform: translateX(25px) translateY(-10px); }
+    }
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-15px) scale(1.08); }
+    }
+    @keyframes rockBoat {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-12px) rotate(6deg); }
+    }
+    @keyframes swimFish {
+      0% { transform: translateX(0) scaleX(1); }
+      100% { transform: translateX(-30px) translateY(-5px) scaleX(1); }
+    }
+
+   
+    .container {
+      max-width: 680px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 32px;
+      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15), 0 15px 0px rgba(14, 165, 233, 0.1);
+      border: 3px solid #bae6fd;
+      padding: 40px;
+      text-align: center;
+      z-index: 2; 
+      position: relative;
+      margin: auto;
+      animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.2) both;
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    
+    .floating-badge {
+      position: absolute;
+      font-size: 2.6rem;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.08));
+      animation: gentleFloat 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .badge-1 { top: -35px; left: -15px; animation-delay: 0s; }
+    .badge-2 { bottom: -20px; right: -15px; animation-delay: 2s; }
+
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0) rotate(-6deg); }
+      50% { transform: translateY(-14px) rotate(6deg); }
+    }
+
+  
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 28px;
+      background: linear-gradient(135deg, #ff006e 0%, #f72585 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+    }
+
+   
+    .project-card {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .data-row {
+      margin-bottom: 18px;
+    }
+    .data-row:last-child { margin-bottom: 0; }
+
+    .data-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #3a86ff;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .data-content {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #334155;
+      background: #ffffff;
+      padding: 12px 18px;
+      border-radius: 14px;
+      box-shadow: 0 4px 10px rgba(58, 134, 255, 0.04);
+      border: 2px solid #bae6fd;
+      line-height: 1.4;
+    }
+
+    
+    .menu-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 18px 24px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00f5d4 0%, #00bbf9 100%);
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 0px #0096c7;
+    }
+    .btn-primary:hover {
+      animation: wobble 0.3s ease-in-out infinite alternate;
+      filter: brightness(1.05);
+    }
+    .btn-primary:active {
+      animation: none;
+      transform: translateY(4px);
+      box-shadow: 0 4px 0px #0096c7;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #70e000 0%, #52b788 100%);
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 0px #38b000;
+    }
+    .btn-secondary:hover {
+      animation: wobble 0.3s ease-in-out infinite alternate;
+      filter: brightness(1.05);
+    }
+    .btn-secondary:active {
+      animation: none;
+      transform: translateY(4px);
+      box-shadow: 0 4px 0px #38b000;
+    }
+
+    @keyframes wobble {
+      0% { transform: translateY(-3px) rotate(-0.6deg); }
+      100% { transform: translateY(-3px) rotate(0.6deg); }
+    }
+
+    .arrow-icon {
+      font-weight: 700;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+    .btn:hover .arrow-icon {
+      transform: translateX(6px);
+    }
+
+    footer {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #64748b;
+      z-index: 2;
+      margin-top: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2rem; }
+      .container { padding: 30px 20px; }
+      .btn { font-size: 1.15rem; }
+      .bg-emoji { display: none; } /* Oculta emojis de fondo en pantallas chicas para no amontonar */
+    }
+  </style>
+</head>
+<body>
+
+ 
+  <div class="bg-emoji e-cloud1">☁️</div>
+  <div class="bg-emoji e-cloud2">☁️</div>
+  <div class="bg-emoji e-star1">✨</div>
+  <div class="bg-emoji e-star2">⭐</div>
+  <div class="bg-emoji e-boat">⛵</div>
+  <div class="bg-emoji e-fish">🐠</div>
+  <div class="bg-emoji e-wave1">🌊</div>
+  <div class="bg-emoji e-wave2">🌊</div>
+
+ 
+  <div class="container">
+    <div class="floating-badge badge-1">🏝️</div>
+    <div class="floating-badge badge-2">✨</div>
+
+    <h1>EVA: La isla de las<br>Herramientas perdidas</h1>
+
+   
+    <div class="project-card">
+      
+      <div class="data-row">
+        <div class="data-label">🚢 Nombre de la Misión</div>
+        <div class="data-content">Mi Entorno Virtual de Aprendizaje</div>
+      </div>
+
+      <div class="data-row">
+        <div class="data-label">🎯 Objetivo</div>
+        <div class="data-content">Desarrollar un entorno virtual de aprendizaje que sirva como herramienta estratégica para atender, mitigar y resolver las problemáticas educativas identificadas en los contextos reales de práctica.</div>
+      </div>
+
+      <div class="data-row">
+        <div class="data-label">🎒 Equipo</div>
+        <div class="data-content">Kevin Arturo Pérez Ramírez</br>Diego Vera Vera</br>Oscar Salvador Pascual</br>Josué Rodríguez Arellanos</br>Erick Alonso</div>
+      </div>
+
+    </div>
+
+   
+    <div class="menu-actions">
+      
+      <a href="herramientas.html" class="btn btn-primary">
+        <span>🎒 Entrar a la Zona de Herramientas (1º a 6º)</span>
+        <span class="arrow-icon">➔</span>
+      </a>
+
+      <a href="h.html" class="btn btn-secondary" >
+        <span>🔒 Archivo Secreto: 120 Herramientas</span>
+        <span class="arrow-icon">➔</span>
+      </a>
+
+    </div>
+  </div>
+   <footer>
+    Entornos Virtuales de Aprendizaje para la educación híbrida: </br>
+            	<center>su pedagogía y didáctica</center>
+  </footer>
+
+</body>
+</html>

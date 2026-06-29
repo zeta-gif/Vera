@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Desafío Matemático</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+        
+        body { 
+            background-color: #f0f4f8; 
+            font-family: 'Poppins', sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; margin: 0; 
+        }
+
+        .container { 
+            background: white; padding: 2rem; border-radius: 30px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05); 
+            text-align: center; width: 90%; max-width: 400px; 
+        }
+
+        h1 { color: #4a5568; font-size: 1.2rem; margin-bottom: 2rem; }
+        .problem { font-size: 2.5rem; color: #2d3748; font-weight: 600; margin-bottom: 1.5rem; }
+        
+        input { 
+            width: 100%; padding: 15px; border: 2px solid #edf2f7; 
+            border-radius: 15px; font-size: 1.2rem; margin-bottom: 1rem; 
+            box-sizing: border-box; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: #63b3ed; }
+
+        button { 
+            width: 100%; padding: 15px; border: none; border-radius: 15px; 
+            background: #63b3ed; color: white; font-size: 1.1rem; 
+            font-weight: 600; cursor: pointer; transition: 0.3s; 
+        }
+        button:hover { background: #4299e1; }
+
+        .progress-bar { 
+            height: 8px; background: #edf2f7; border-radius: 4px; 
+            margin-top: 2rem; overflow: hidden; 
+        }
+        .progress-fill { height: 100%; width: 0%; background: #68d391; transition: 0.5s; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Nivel <span id="lvl">1</span> / 20</h1>
+        <div class="problem" id="prob">1/2 + 1/4</div>
+        <input type="text" id="ans" placeholder="Tu respuesta..." autocomplete="off">
+        <button onclick="check()">Confirmar</button>
+        <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+    </div>
+
+    <script>
+        const data = [
+            {p: "1/2 + 1/4", r: "3/4"}, {p: "1/3 + 1/6", r: "1/2"}, {p: "2/5 + 1/10", r: "1/2"}, {p: "1/4 + 1/8", r: "3/8"}, {p: "1/2 + 1/6", r: "2/3"},
+            {p: "3/4 - 1/2", r: "1/4"}, {p: "5/6 - 1/3", r: "1/2"}, {p: "2/3 - 1/9", r: "5/9"}, {p: "4/5 - 2/10", r: "3/5"}, {p: "7/8 - 1/4", r: "5/8"},
+            {p: "5/2 a mixto", r: "2 1/2"}, {p: "7/3 a mixto", r: "2 1/3"}, {p: "9/4 a mixto", r: "2 1/4"}, {p: "11/5 a mixto", r: "2 1/5"}, {p: "13/6 a mixto", r: "2 1/6"},
+            {p: "1 1/2 a impropia", r: "3/2"}, {p: "2 1/4 a impropia", r: "9/4"}, {p: "3 1/3 a impropia", r: "10/3"}, {p: "2/3 + 1/4", r: "11/12"}, {p: "3/4 + 2/5", r: "23/20"}
+        ];
+
+        let i = 0;
+        const input = document.getElementById('ans');
+
+        function check() {
+            if(input.value.trim() === data[i].r) {
+                i++;
+                document.getElementById('fill').style.width = (i*5) + "%";
+                if(i < 20) {
+                    document.getElementById('lvl').innerText = i + 1;
+                    document.getElementById('prob').innerText = data[i].p;
+                    input.value = "";
+                } else {
+                    document.querySelector('.container').innerHTML = "<h1>¡Felicidades, terminaste todo!</h1>";
+                }
+            } else {
+                input.style.borderColor = "#fc8181";
+                setTimeout(() => input.style.borderColor = "#edf2f7", 500);
+            }
+        }
+    </script>
+</body>
+</html>

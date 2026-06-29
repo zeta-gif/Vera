@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometría Épica: Los 20 Templos (Versión Definitiva)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Fredoka+One&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary: #4a00e0;
+            --secondary: #00cec9;
+            --orange: #ff6b6b;
+            --yellow: #fdcb6e;
+            --dark: #2d3436;
+            --white: #ffffff;
+            --success: #2ecc71;
+            --error: #e74c3c;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        #game-card {
+            width: 100%;
+            max-width: 880px;
+            background: var(--white);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 5px solid var(--dark);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* HUD Superior */
+        #hud {
+            background: #f1f2f6;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--dark);
+        }
+
+        .hud-item {
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            color: var(--dark);
+        }
+
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+
+        .screen {
+            display: none;
+            padding: 30px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .active { display: flex; }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 42px;
+            color: var(--primary);
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 0px var(--yellow);
+            -webkit-text-stroke: 1px var(--dark);
+        }
+
+        .instruction {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+
+        /* Contenedor del Canvas */
+        #canvas-container {
+            background: #ffffff;
+            border: 4px solid var(--dark);
+            border-radius: 20px;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 6px 0 var(--dark);
+        }
+
+        canvas {
+            max-width: 100%;
+            display: block;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        /* Distribución de Opciones */
+        #options-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 650px;
+            margin-top: 5px;
+        }
+
+        .opt-btn {
+            background: var(--white);
+            border: 3px solid var(--dark);
+            padding: 14px;
+            font-size: 19px;
+            font-weight: 700;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--dark);
+            transition: all 0.1s ease;
+        }
+
+        .opt-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 var(--dark);
+            background: #f5f6fa;
+        }
+
+        .opt-btn:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 var(--dark);
+        }
+
+        .opt-correct {
+            background: var(--success) !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #27ae60 !important;
+        }
+
+        .opt-wrong {
+            background: var(--error) !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #c0392b !important;
+        }
+
+        /* Cuadro de Retroalimentación */
+        #explain-box {
+            width: 100%;
+            max-width: 650px;
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            border: 3px solid var(--dark);
+            font-size: 17px;
+            font-weight: 700;
+            display: none;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .explain-success { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .explain-error { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+        .action-btn {
+            font-family: 'Comfortaa', cursive;
+            background: var(--orange);
+            color: white;
+            border: 3px solid var(--dark);
+            padding: 14px 35px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 var(--dark);
+            margin-top: 15px;
+        }
+
+        .action-btn:hover { background: #ff4757; transform: translateY(-2px); }
+        .action-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--dark); }
+    </style>
+</head>
+<body>
+
+<div id="game-card">
+    <div id="start-screen" class="screen active">
+        <h1>⚔️ Geometría Épica ⚔️</h1>
+        <p class="instruction">El Desafío Maestro de los 20 Templos Geométricos</p>
+        <p style="font-size: 17px; color: #57606f; max-width: 600px; line-height: 1.5;">
+            No es un juego al azar. Enfrentarás 20 pruebas analíticas de ángulos, transportadores, perímetros y áreas con dificultad progresiva. ¡Analiza bien, evita las trampas matemáticas y aprende de cada explicación!
+        </p>
+        <div style="font-size: 70px; margin: 15px;">📐🧭🏛️📦</div>
+        <button class="action-btn" onclick="startEpicAdventure()">¡Entrar al Primer Templo!</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div id="hud" style="position: absolute; top:0; left:0; right:0;">
+            <div class="hud-item">Templo: <span id="lbl-question-num" class="badge">1 / 20</span></div>
+            <div class="hud-item" id="lbl-section" style="color: var(--primary);">SECCIÓN</div>
+            <div class="hud-item">Puntos: <span id="lbl-score" class="badge" style="background:var(--secondary)">0</span></div>
+        </div>
+
+        <div style="height: 45px;"></div> <div id="question-text" class="instruction">Cargando desafío...</div>
+
+        <div id="canvas-container">
+            <canvas id="geometryCanvas" width="460" height="240"></canvas>
+        </div>
+
+        <div id="options-layout"></div>
+
+        <div id="explain-box"></div>
+
+        <button id="next-btn" class="action-btn" style="display: none;" onclick="advanceTemplo()">Avanzar de Templo ➡️</button>
+    </div>
+
+    <div id="end-screen" class="screen">
+        <h1>🏆 ¡Leyenda de la Geometría! 🏆</h1>
+        <p class="instruction" style="font-size: 24px;">¡Has superado con éxito los 20 templos matemáticos!</p>
+        <div style="font-size: 90px; margin: 10px;">👑💎📜</div>
+        <p id="final-score-text" style="font-size: 22px; font-weight: bold; color: var(--primary);"></p>
+        <button class="action-btn" onclick="location.reload()">Reiniciar Aventura 🔄</button>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('geometryCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let state = {
+        score: 0,
+        currentIndex: 0,
+        answered: false
+    };
+
+    // --- BANCO COMPLETO DE 20 PREGUNTAS ÚNICAS SIN REPETICIÓN (DIFICULTAD CONTROLADA) ---
+    const temploQuestions = [
+        // FASE 1: CLASIFICACIÓN DE ÁNGULOS (1 - 5)
+        { type: 'class', angle: 25, section: "Clasificación", q: "[Templo 1] ¿Cómo se clasifica un ángulo agudo extremo como este que mide solo 25°?", opts: ["Agudo", "Recto", "Obtuso"], ans: "Agudo", exp: "¡Correcto! Todos los ángulos mayores a 0° y menores a 90° son AGUDOS, sin importar qué tan cerrados o pequeños sean." },
+        { type: 'class', angle: 90, section: "Clasificación", q: "[Templo 2] Observa esta esquina perfecta de 90°. ¿Qué nombre recibe?", opts: ["Agudo", "Recto", "Obtuso"], ans: "Recto", exp: "¡Exacto! Es un ángulo RECTO. Mide exactamente 90° y sus líneas son completamente perpendiculares." },
+        { type: 'class', angle: 115, section: "Clasificación", q: "[Templo 3] Este ángulo mide exactamente 115°. ¿Cuál es su clasificación correcta?", opts: ["Agudo", "Recto", "Obtuso"], ans: "Obtuso", exp: "¡Muy bien! Es un ángulo OBTUSO porque supera los 90° pero es menor que un ángulo llano (180°)." },
+        { type: 'class', angle: 75, section: "Clasificación", q: "[Templo 4] Cuidado: este ángulo está muy cerca de parecer un ángulo recto, pero mide 75°. Es un ángulo...", opts: ["Agudo", "Recto", "Obtuso"], ans: "Agudo", exp: "¡Excelente ojo! Como mide 75° (menos de 90°), sigue perteneciendo a la familia de los ángulos AGUDOS." },
+        { type: 'class', angle: 160, section: "Clasificación", q: "[Templo 5] Este ángulo está sumamente abierto, midiendo 160°. ¿Cómo lo clasificas?", opts: ["Agudo", "Recto", "Obtuso"], ans: "Obtuso", exp: "¡Correcto! Al medir más de 90° y estar muy extendido, es un ángulo OBTUSO." },
+
+        // FASE 2: USO DEL TRANSPORTADOR CON TRAMPAS DE ESCALA (6 - 10)
+        { type: 'protractor', angle: 40, section: "El Transportador", q: "[Templo 6] Mira la escala del transportador. ¿Cuánto mide exactamente este ángulo agudo?", opts: ["40°", "140°", "50°", "90°"], ans: "40°", exp: "¡Bien hecho! Empezamos a contar desde el 0° de la derecha. La trampa común es leer la escala invertida (140°), pero al ver que es más cerrado que 90°, confirmas que mide 40°." },
+        { type: 'protractor', angle: 130, section: "El Transportador", q: "[Templo 7] Este ángulo es obtuso. ¿Qué medida indica correctamente el transportador?", opts: ["130°", "50°", "120°", "140°"], ans: "130°", exp: "¡Exacto! Abre desde la derecha y supera los 90° hasta llegar al 130°. La opción de 50° representa el error clásico de lectura inversa." },
+        { type: 'protractor', angle: 85, section: "El Transportador", q: "[Templo 8] Observa con mucha atención la línea. Está justo antes del ángulo recto. ¿Cuánto mide?", opts: ["85°", "90°", "80°", "95°"], ans: "85°", exp: "¡Excelente precisión! Mide exactamente 5 grados menos que la esquina perfecta de 90°, es decir, 85°." },
+        { type: 'protractor', angle: 155, section: "El Transportador", q: "[Templo 9] Este ángulo está muy abierto y cae justo entre el 150° y 160°. ¿Cuál es su medida?", opts: ["155°", "25°", "165°", "145°"], ans: "155°", exp: "¡Perfecto! La línea marca justo la mitad entre 150° y 160°, dando como resultado 155°." },
+        { type: 'protractor', angle: 65, section: "El Transportador", q: "[Templo 10] ¿Qué valor exacto tiene este ángulo agudo marcado en el transportador?", opts: ["65°", "115°", "55°", "60°"], ans: "65°", exp: "¡Completado! Se sitúa exactamente a la mitad entre el 60° y 70°, marcando con precisión 65°." },
+
+        // FASE 3: PERÍMETROS AVANZADOS CON COMPROBACIÓN DE CONCEPTOS (11 - 15)
+        { type: 'perimeter', w: 12, h: 7, isSq: false, section: "Perímetros", q: "[Templo 11] Calcula el PERÍMETRO de este rectángulo de Base = 12 cm y Altura = 7 cm.", opts: ["38 cm", "19 cm", "84 cm", "34 cm"], ans: "38 cm", exp: "¡Fantástico! El perímetro es la suma de los CUATRO lados del contorno: 12 + 7 + 12 + 7 = 38 cm. (La trampa era 19 cm que solo suma dos lados, u 84 cm² que es el área)." },
+        { type: 'perimeter', w: 9, h: 9, isSq: true, section: "Perímetros", q: "[Templo 12] Tienes un cuadrado perfecto donde cada uno de sus lados mide 9 cm. ¿Cuál es su perímetro?", opts: ["36 cm", "18 cm", "81 cm", "24 cm"], ans: "36 cm", exp: "¡Correcto! Al tener 4 lados iguales, multiplicamos o sumamos el lado cuatro veces: 9 × 4 = 36 cm. (Evitaste caer en la trampa de 81 cm², que corresponde al área)." },
+        { type: 'perimeter', w: 15, h: 4, isSq: false, section: "Perímetros", q: "[Templo 13] Un terreno rectangular mide 15 metros de largo y 4 metros de ancho. ¿Cuál es su perímetro?", opts: ["38 m", "19 m", "60 m", "30 m"], ans: "38 m", exp: "¡Así se hace! Sumamos todos sus lados exteriores: 15 + 4 + 15 + 4 = 38 metros." },
+        { type: 'perimeter', w: 11, h: 11, isSq: true, section: "Perímetros", q: "[Templo 14] Calcula el contorno completo (Perímetro) de un cuadrado que mide 11 cm por lado.", opts: ["44 cm", "22 cm", "121 cm", "40 cm"], ans: "44 cm", exp: "¡Excelente! Sumamos sus cuatro lados idénticos: 11 + 11 + 11 + 11 = 44 cm." },
+        { type: 'perimeter', w: 8, h: 6, isSq: false, section: "Perímetros", q: "[Templo 15] Determina el perímetro de una figura rectangular de 8 cm de base y 6 cm de altura.", opts: ["28 cm", "14 cm", "48 cm", "24 cm"], ans: "28 cm", exp: "¡Muy bien hecho! Lados paralelos iguales: 8 + 6 + 8 + 6 = 28 cm." },
+
+        // FASE 4: ÁREAS AVANZADAS (SUPERFICIE INTERNA) (16 - 20)
+        { type: 'area', w: 9, h: 6, section: "Áreas", q: "[Templo 16] Calcula el ÁREA de este rectángulo de Base = 9 cm y Altura = 6 cm. ¿Cuántos cm² cubre?", opts: ["54 cm²", "30 cm²", "27 cm²", "45 cm²"], ans: "54 cm²", exp: "¡Excelente! El área mide la superficie de adentro multiplicando Base × Altura: 9 × 6 = 54 cm². (La opción 30 cm era el perímetro, ¡bien esquivada!)." },
+        { type: 'area', w: 8, h: 8, isSq: true, section: "Áreas", q: "[Templo 17] Calcula cuántos centímetros cuadrados (Área) tiene este cuadrado de 8 cm de lado.", opts: ["64 cm²", "32 cm²", "16 cm²", "56 cm²"], ans: "64 cm²", exp: "¡Es correcto! Para un cuadrado multiplicamos Lado × Lado: 8 × 8 = 64 cm². (La opción 32 cm era el perímetro)." },
+        { type: 'area', w: 12, h: 5, section: "Áreas", q: "[Templo 18] Calcula el área de una gran superficie rectangular que mide 12 cm de base por 5 cm de altura.", opts: ["60 cm²", "34 cm²", "17 cm²", "55 cm²"], ans: "60 cm²", exp: "¡Formidable! Aplicamos la fórmula matemática: Base × Altura = 12 × 5 = 60 cm²." },
+        { type: 'area', w: 11, h: 11, isSq: true, section: "Áreas", q: "[Templo 19] [Reto Mayor] ¿Cuál es el área de una baldosa cuadrada cuyos lados miden 11 cm cada uno?", opts: ["121 cm²", "44 cm²", "22 cm²", "110 cm²"], ans: "121 cm²", exp: "¡Impresionante! Multiplicar 11 × 11 nos da un total de 121 centímetros cuadrados de superficie interna." },
+        { type: 'area', w: 7, h: 8, section: "Áreas", q: "[Templo Final 20] El último templo exige calcular el área de un rectángulo de Base = 7 cm y Altura = 8 cm.", opts: ["56 cm²", "30 cm²", "15 cm²", "49 cm²"], ans: "56 cm²", exp: "¡Espectacular! Resolviste el último templo multiplicando sus dimensiones básicas: 7 × 8 = 56 cm²." }
+    ];
+
+    function startEpicAdventure() {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('game-screen').classList.add('active');
+        state.score = 0;
+        state.currentIndex = 0;
+        loadTemploQuestion();
+    }
+
+    function loadTemploQuestion() {
+        state.answered = false;
+        
+        // Ocultar botones e información previa
+        document.getElementById('next-btn').style.display = "none";
+        const expBox = document.getElementById('explain-box');
+        expBox.style.display = "none";
+        expBox.className = "";
+
+        const q = temploQuestions[state.currentIndex];
+
+        // Sincronizar textos del HUD
+        document.getElementById('lbl-question-num').innerText = `${state.currentIndex + 1} / 20`;
+        document.getElementById('lbl-score').innerText = state.score;
+        document.getElementById('lbl-section').innerText = `Misión: ${q.section}`;
+        document.getElementById('question-text').innerText = q.q;
+
+        // Limpiar y poblar opciones de respuesta fijas
+        const layout = document.getElementById('options-layout');
+        layout.innerHTML = "";
+
+        q.opts.forEach(optText => {
+            const btn = document.createElement('button');
+            btn.className = "opt-btn";
+            btn.innerText = optText;
+            btn.onclick = () => verifyEpicAnswer(optText, btn);
+            layout.appendChild(btn);
+        });
+
+        drawGeometryScreen();
+    }
+
+    function drawGeometryScreen() {
+        const q = temploQuestions[state.currentIndex];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        if (q.type === 'class' || q.type === 'protractor') {
+            const cx = 230, cy = 190, r = 135;
+            const rad = q.angle * Math.PI / 180;
+
+            // Renderizar un transportador matemático detallado de fondo (0 a la derecha, 180 a la izquierda)
+            if (q.type === 'protractor') {
+                ctx.beginPath();
+                ctx.arc(cx, cy, r + 15, Math.PI, 0, false);
+                ctx.fillStyle = "rgba(253, 203, 110, 0.25)";
+                ctx.fill();
+                ctx.strokeStyle = "#e67e22";
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(cx - r - 15, cy);
+                ctx.lineTo(cx + r + 15, cy);
+                ctx.stroke();
+
+                ctx.fillStyle = "#2d3436";
+                ctx.font = "bold 12px Quicksand";
+                ctx.textAlign = "center";
+
+                // Marcas y números estandarizados de derecha a izquierda
+                for (let deg = 0; deg <= 180; deg += 10) {
+                    let radG = deg * Math.PI / 180;
+                    let isMain = deg % 30 === 0 || deg === 90;
+                    let len = isMain ? 12 : 6;
+
+                    ctx.beginPath();
+                    ctx.moveTo(cx + r * Math.cos(radG), cy - r * Math.sin(radG));
+                    ctx.lineTo(cx + (r - len) * Math.cos(radG), cy - (r - len) * Math.sin(radG));
+                    ctx.stroke();
+
+                    if (isMain) {
+                        let tx = cx + (r - 24) * Math.cos(radG);
+                        let ty = cy - (r - 24) * Math.sin(radG);
+                        ctx.fillText(deg + "°", tx, ty + 4);
+                    }
+                }
+            }
+
+            // Dibujar las líneas oscuras del ángulo analizado
+            ctx.strokeStyle = "#2d3436";
+            ctx.lineWidth = 6;
+            
+            // Línea base rígida derecha (Punto de inicio 0°)
+            ctx.beginPath(); 
+            ctx.moveTo(cx, cy); 
+            ctx.lineTo(cx + r, cy); 
+            ctx.stroke();
+
+            // Línea móvil del ángulo abierto hacia arriba/izquierda
+            ctx.beginPath(); 
+            ctx.moveTo(cx, cy); 
+            ctx.lineTo(cx + r * Math.cos(rad), cy - r * Math.sin(rad)); 
+            ctx.stroke();
+
+            // Arco indicador dinámico púrpura uniforme
+            ctx.strokeStyle = "#4a00e0";
+            ctx.lineWidth = 3.5;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 35, 0, -rad, true);
+            ctx.stroke();
+
+            // Vértice central resaltado en rojo coral
+            ctx.fillStyle = "#ff6b6b";
+            ctx.beginPath(); ctx.arc(cx, cy, 7, 0, 2 * Math.PI); ctx.fill();
+        } 
+        
+        else if (q.type === 'perimeter' || q.type === 'area') {
+            // Factor de escala dinámico basado en las dimensiones
+            const maxUnits = Math.max(q.w, q.h);
+            const sizeUnit = Math.floor(140 / maxUnits); 
+            
+            const wPx = q.w * sizeUnit;
+            const hPx = q.h * sizeUnit;
+            const x = (canvas.width - wPx) / 2;
+            const y = (canvas.height - hPx) / 2;
+
+            // Pintar superficie interna
+            ctx.fillStyle = q.type === 'area' ? "rgba(0, 206, 203, 0.25)" : "rgba(74, 0, 224, 0.1)";
+            ctx.fillRect(x, y, wPx, hPx);
+
+            // Trazar cuadrícula interna vertical de apoyo (1x1 cm)
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.12)";
+            ctx.lineWidth = 1;
+            for (let i = 1; i < q.w; i++) {
+                ctx.beginPath(); ctx.moveTo(x + i * sizeUnit, y); ctx.lineTo(x + i * sizeUnit, y + hPx); ctx.stroke();
+            }
+            // Trazar cuadrícula interna horizontal de apoyo
+            for (let j = 1; j < q.h; j++) {
+                ctx.beginPath(); ctx.moveTo(x, y + j * sizeUnit); ctx.lineTo(x + wPx, y + j * sizeUnit); ctx.stroke();
+            }
+
+            // Borde estructural sólido
+            ctx.strokeStyle = "#2d3436";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x, y, wPx, hPx);
+
+            // Etiquetas de dimensiones claras
+            ctx.fillStyle = "#2d3436";
+            ctx.font = "bold 16px Quicksand";
+            ctx.textAlign = "center";
+            
+            // Base (Etiqueta inferior)
+            ctx.fillText(`${q.w} cm`, x + wPx / 2, y + hPx + 24);
+            
+            // Altura (Etiqueta lateral derecha)
+            ctx.textAlign = "left";
+            ctx.fillText(`${q.h} cm`, x + wPx + 12, y + hPx / 2 + 5);
+
+            // Si pide perímetro, se etiquetan todos los lados como andamio pedagógico
+            if (q.type === 'perimeter') {
+                ctx.textAlign = "center";
+                ctx.fillText(`${q.w} cm`, x + wPx / 2, y - 12);
+                ctx.textAlign = "right";
+                ctx.fillText(`${q.h} cm`, x - 12, y + hPx / 2 + 5);
+            }
+        }
+    }
+
+    function verifyEpicAnswer(selectedText, clickedBtn) {
+        if (state.answered) return;
+        state.answered = true;
+
+        const q = temploQuestions[state.currentIndex];
+        const expBox = document.getElementById('explain-box');
+        const buttons = document.querySelectorAll('.opt-btn');
+
+        // Deshabilitar todas las opciones
+        buttons.forEach(b => b.disabled = true);
+
+        if (selectedText === q.ans) {
+            state.score += 10;
+            clickedBtn.classList.add('opt-correct');
+            expBox.innerHTML = `🎉 <strong>¡EXCELENTE TRABAJO!</strong> <br>${q.exp}`;
+            expBox.className = "explain-success";
+        } else {
+            clickedBtn.classList.add('opt-wrong');
+            // Alumbrar la opción correcta para corregir el error visualmente
+            buttons.forEach(b => {
+                if (b.innerText === q.ans) b.classList.add('opt-correct');
+            });
+            expBox.innerHTML = `❌ <strong>¡OH, CUIDADO!</strong> La opción correcta era <strong>${q.ans}</strong>.<br><br>💡 <strong>Explicación:</strong> ${q.exp}`;
+            expBox.className = "explain-error";
+        }
+
+        expBox.style.display = "block";
+        document.getElementById('next-btn').style.display = "inline-block";
+        document.getElementById('lbl-score').innerText = state.score;
+    }
+
+    function advanceTemplo() {
+        state.currentIndex++;
+
+        if (state.currentIndex >= temploQuestions.length) {
+            // Fin de la aventura completa
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('end-screen').classList.add('active');
+            document.getElementById('final-score-text').innerText = `Puntaje Final Conseguido: ${state.score} / 200 puntos totales.`;
+        } else {
+            loadTemploQuestion();
+        }
+    }
+</script>
+
+</body>
+</html>

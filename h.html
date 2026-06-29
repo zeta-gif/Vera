@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misiones Educativas Primaria</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-main: #f4f6fa;
+      --bg-card: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      
+      /* Colores por campo formativo */
+      --color-lenguajes: #ec4899;
+      --color-saberes: #3b82f6;
+      --color-etica: #10b981;
+      --color-humano: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body { 
+      font-family: 'Fredoka', sans-serif; 
+      background-color: var(--bg-main); 
+      color: var(--text-main); 
+      padding: 30px 15px;
+      line-height: 1.4;
+    }
+
+    .main-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .main-title {
+      color: #1e3a8a;
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .main-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .tabs-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tab-radio {
+      display: none;
+    }
+
+    .tabs-nav {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+      margin-bottom: 25px;
+      background: #e2e8f0;
+      padding: 6px;
+      border-radius: 16px;
+    }
+
+    .tab-label {
+      display: table-cell;
+      text-align: center;
+      padding: 14px 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #475569;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-label:hover {
+      background: rgba(255, 255, 255, 0.5);
+      color: #1e293b;
+    }
+
+    #tab1:checked ~ .tabs-nav label[for="tab1"],
+    #tab2:checked ~ .tabs-nav label[for="tab2"],
+    #tab3:checked ~ .tabs-nav label[for="tab3"],
+    #tab4:checked ~ .tabs-nav label[for="tab4"],
+    #tab5:checked ~ .tabs-nav label[for="tab5"],
+    #tab6:checked ~ .tabs-nav label[for="tab6"] {
+      background: var(--bg-card);
+      color: #2563eb;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .grade-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    #tab1:checked ~ #content1,
+    #tab2:checked ~ #content2,
+    #tab3:checked ~ #content3,
+    #tab4:checked ~ #content4,
+    #tab5:checked ~ #content5,
+    #tab6:checked ~ #content6 {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-row {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-col {
+      display: table-cell;
+      width: 50%;
+      padding: 0 10px;
+      vertical-align: top;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-row, .dashboard-col {
+        display: block;
+        width: 100%;
+        padding: 0;
+      }
+      .dashboard-col {
+        margin-bottom: 20px;
+      }
+      .tab-label {
+        padding: 10px 5px;
+        font-size: 0.9rem;
+      }
+    }
+
+    .field-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      border: 1px solid var(--border-color);
+      height: 100%;
+    }
+
+    .field-header {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .lenguajes .field-header { color: var(--color-lenguajes); border-bottom-color: #fce7f3; }
+    .saberes .field-header { color: var(--color-saberes); border-bottom-color: #dbeafe; }
+    .etica .field-header { color: var(--color-etica); border-bottom-color: #d1fae5; }
+    .humano .field-header { color: var(--color-humano); border-bottom-color: #ede9fe; }
+
+    .tool-item {
+      display: table;
+      width: 100%;
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .tool-item:hover {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      transform: translateX(2px);
+    }
+
+    .tool-cell-info {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .tool-cell-btn {
+      display: table-cell;
+      vertical-align: middle;
+      text-align: right;
+      width: 90px;
+    }
+
+    .tool-number {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: var(--text-muted);
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .tool-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .btn-action {
+      display: inline-block;
+      padding: 6px 14px;
+      text-decoration: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .lenguajes .btn-action { background-color: var(--color-lenguajes); }
+    .saberes .btn-action { background-color: var(--color-saberes); }
+    .etica .btn-action { background-color: var(--color-etica); }
+    .humano .btn-action { background-color: var(--color-humano); }
+
+    .btn-action:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+	
+	.btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #475569;
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      padding: 14px 24px;
+      border-radius: 18px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 5px 0px #cbd5e1;
+    }
+    .btn-back:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    .btn-back:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0px #cbd5e1;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="main-header">
+    <h1 class="main-title">🚀 Panel Espacial de Misiones Educativas</h1>
+    <p class="main-subtitle">Selecciona un grado para descubrir tus misiones y portales de aprendizaje</p>
+  </div>
+
+  <div class="tabs-container">
+    <input type="radio" name="grades" id="tab1" class="tab-radio" checked>
+    <input type="radio" name="grades" id="tab2" class="tab-radio">
+    <input type="radio" name="grades" id="tab3" class="tab-radio">
+    <input type="radio" name="grades" id="tab4" class="tab-radio">
+    <input type="radio" name="grades" id="tab5" class="tab-radio">
+    <input type="radio" name="grades" id="tab6" class="tab-radio">
+
+    <div class="tabs-nav">
+      <label for="tab1" class="tab-label">🎯 1º Grado</label>
+      <label for="tab2" class="tab-label">🎯 2º Grado</label>
+      <label for="tab3" class="tab-label">🎯 3º Grado</label>
+      <label for="tab4" class="tab-label">🎯 4º Grado</label>
+      <label for="tab5" class="tab-label">🎯 5º Grado</label>
+      <label for="tab6" class="tab-label">🎯 6º Grado</label>
+    </div>
+
+    <div class="grade-content" id="content1">
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card lenguajes">
+            <div class="field-header">📚 Lenguajes</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Comprensión lectora 1º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/comprension-lectora/comprension-primero" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Aprender a leer</span></div><div class="tool-cell-btn"><a href="https://www.educaenvivo.com/juegos-educativos-online/aprender-a-leer/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Juegos de 6 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-6-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Castellano 1º y 2º</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/1o-y-2o-de-primaria/castellano/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">5</span><span class="tool-name">Smile and Learn</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/channel/UCCZpm6436NiU__lcBAlEZmQ" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card saberes">
+            <div class="field-header">🔬 Saberes y Pensamiento Científico</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Sumas sin llevadas</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-de-sumas-sin-llevadas" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Matemática 6 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-6-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Matemáticas 1º y 2º</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/1o-y-2o-de-primaria/matematicas/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Juegos Arcoíris</span></div><div class="tool-cell-btn"><a href="https://www.juegosarcoiris.com/juegos" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">5</span><span class="tool-name">La Eduteca – Ciencias</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/c/LaEduteca" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card etica">
+            <div class="field-header">🌍 Ética, Naturaleza y Sociedades</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Nusi y la Primavera</span></div><div class="tool-cell-btn"><a href="https://www.educaixa.com/es/-/nusi-y-la-primavera" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Sociales 6 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-6-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Happy Learning Español</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/c/HappyLearningEs" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card humano">
+            <div class="field-header">🧠 De lo Humano y lo Comunitario</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Cosmic Kids Yoga</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/playlist?list=PL8snGkhBF7njrfPJ9g3bTmbR_Orc44o8_" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Habilidades 6 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-6-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Castellano e Infantil</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/1o-2o-y-3o-infantil/castellano/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade-content" id="content2">
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card lenguajes">
+            <div class="field-header">📚 Lenguajes</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Comprensión lectora 2º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/comprension-lectora/comprension-segundo" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Juegos de 7 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-7-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Educaenvivo – Lectoescritura</span></div><div class="tool-cell-btn"><a href="https://www.educaenvivo.com/juegos-educativos-online/lectoescritura/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Vedoque – Desafíos</span></div><div class="tool-cell-btn"><a href="https://www.vedoque.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card saberes">
+            <div class="field-header">🔬 Saberes y Pensamiento Científico</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Sumas con llevadas</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-de-sumas-con-llevadas" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Matemática 7 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-7-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Happy Learning – Ciencias</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/c/HappyLearningEs" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card etica">
+            <div class="field-header">🌍 Ética, Naturaleza y Sociedades</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Petol y el Señor Roble</span></div><div class="tool-cell-btn"><a href="https://www.educaixa.com/-/petol-y-el-senor-roble" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Sociales 7 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-7-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Toporopa – Mapas básicos</span></div><div class="tool-cell-btn"><a href="https://www.toporopa.eu/es/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card humano">
+            <div class="field-header">🧠 De lo Humano y lo Comunitario</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Cosmic Kids Yoga España</span></div><div class="tool-cell-btn"><a href="https://app.cosmickids.com/videos-en-espanol" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Habilidades 7 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-7-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Mundo Primaria – Creatividad</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade-content" id="content3">
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card lenguajes">
+            <div class="field-header">📚 Lenguajes</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Comprensión 3º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/comprension-lectora/comprension-tercero" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Juegos de 8 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-8-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Cristic – Castellano 3º y 4º</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/3o-y-4o-de-primaria/castellano/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Poesía Infantil Interactiva</span></div><div class="tool-cell-btn"><a href="https://www.poesiainfantil.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card saberes">
+            <div class="field-header">🔬 Saberes y Pensamiento Científico</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Tablas de Multiplicar</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-de-multiplicar" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Matemáticas 8 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-8-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Cristic – Matemáticas 3º</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/3o-y-4o-de-primaria/matematicas/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">NASA Kids’ Club</span></div><div class="tool-cell-btn"><a href="https://www.nasa.gov/kidsclub/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card etica">
+            <div class="field-header">🌍 Ética, Naturaleza y Sociedades</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Conocimiento del Medio 3º</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/3o-y-4o-de-primaria/cono-del-medio/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Geografía e Historia 8 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-8-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Google Earth – Exploración</span></div><div class="tool-cell-btn"><a href="https://earth.google.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card humano">
+            <div class="field-header">🧠 De lo Humano y lo Comunitario</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Habilidad mental 8 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-8-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Cosmic Kids – Yoga Ritmo</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/playlist?list=PL8snGkhBF7njrfPJ9g3bTmbR_Orc44o8_" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">educaixa – Dinámicas</span></div><div class="tool-cell-btn"><a href="https://www.educaixa.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade-content" id="content4">
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card lenguajes">
+            <div class="field-header">📚 Lenguajes</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Comprensión 4º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/comprension-lectora/comprension-cuarto" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Juegos de 9 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-9-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Vedoque – Ortografía</span></div><div class="tool-cell-btn"><a href="https://www.vedoque.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Gramática Interactiva 4º</span></div><div class="tool-cell-btn"><a href="https://www.educaenvivo.com/juegos-educativos-online/gramatica/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card saberes">
+            <div class="field-header">🔬 Saberes y Pensamiento Científico</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Divisiones de una cifra</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-de-divisiones" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Matemáticas 9 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-9-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Math Playground</span></div><div class="tool-cell-btn"><a href="https://www.mathplayground.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Happy Learning – Experimentos</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/c/HappyLearningEs" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card etica">
+            <div class="field-header">🌍 Ética, Naturaleza y Sociedades</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Sociales 9 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-9-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Toporopa – Países y Capitales</span></div><div class="tool-cell-btn"><a href="https://www.toporopa.eu/es/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Google Interland – Ciudadanía</span></div><div class="tool-cell-btn"><a href="https://beinternetawesome.withgoogle.com/es_419/interland" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card humano">
+            <div class="field-header">🧠 De lo Humano y lo Comunitario</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Lógica y Razonamiento</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-9-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">TED-Ed Animaciones</span></div><div class="tool-cell-btn"><a href="https://ed.ted.com/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Cosmic Kids – Meditación</span></div><div class="tool-cell-btn"><a href="https://app.cosmickids.com/videos-en-espanol" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade-content" id="content5">
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card lenguajes">
+            <div class="field-header">📚 Lenguajes</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Comprensión 5º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/comprension-lectora/comprension-quinto" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Gramática y Sintaxis 5º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/gramatica/gra-quinto" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Juegos de 10 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-10-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Cristic – Castellano Avanzado</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/portfolio_category/castellano-5o-y-6o-de-primaria/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card saberes">
+            <div class="field-header">🔬 Saberes y Pensamiento Científico</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Matemáticas 10 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-10-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Ciencias Naturales 5º y 6º</span></div><div class="tool-cell-btn"><a href="https://www.cristic.com/5o-y-6o-de-primaria/naturales/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Math2me – Clases Online</span></div><div class="tool-cell-btn"><a href="https://www.youtube.com/channel/UCB34YbuG6ThXJzJsDAII5Dw" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">4</span><span class="tool-name">Portal de la NASA en Español</span></div><div class="tool-cell-btn"><a href="https://www.nasa.gov/es/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card etica">
+            <div class="field-header">🌍 Ética, Naturaleza y Sociedades</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Junan y la Gruta Mágica</span></div><div class="tool-cell-btn"><a href="https://www.educaixa.com/-/junan-y-la-gruta-magica" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">2</span><span class="tool-name">Geografía Mundial 10 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-10-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">3</span><span class="tool-name">Seterra – Mapas Interactivos</span></div><div class="tool-cell-btn"><a href="https://www.geoguessr.com/es/quiz/seterra" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card humano">
+            <div class="field-header">🧠 De lo Humano y lo Comunitario</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Habilidades 10 años</span></div><div class="tool-cell-btn"><a href="https://www.cokitos.com/category/juegos-para-ninos-de-10-anos/" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade-content" id="content6">
+      <div class="dashboard-row">
+        <div class="dashboard-col">
+          <div class="field-card lenguajes">
+            <div class="field-header">📚 Lenguajes</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Comprensión 6º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-lenguaje/comprension-lectora/comprension-sexto" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-col">
+          <div class="field-card saberes">
+            <div class="field-header">🔬 Saberes y Pensamiento Científico</div>
+            <div class="tools-list">
+              <div class="tool-item"><div class="tool-cell-info"><span class="tool-number">1</span><span class="tool-name">Matemáticas 6º</span></div><div class="tool-cell-btn"><a href="https://www.mundoprimaria.com/juegos-educativos/juegos-matematicas/matematicas-sexto-primaria" class="btn-action" target="_blank" rel="noopener noreferrer">Misión</a></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <a href="index.html" class="btn-back">
+      <span>⬅ Volver a la Misión</span>
+    </a>
+
+</body>
+</html>
